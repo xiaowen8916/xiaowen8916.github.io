@@ -357,11 +357,23 @@ body {
 }
 #header-title {
   text-align: center;
-  height: 40px;
   position: absolute;
-  top: 50%;
+  top: 25%;
   left: 0;
   margin-top: -20px;
+}
+.head-img {
+  display: inline-block;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+  overflow: hidden;
+  -webkit-box-shadow: 0 0 30px #fff;
+  box-shadow: 0 0 30px #fff;
+}
+.head-img>img {
+  display: block;
+  width: 100px;
+  height: 100px;
 }
 #logo,
 #subtitle {
