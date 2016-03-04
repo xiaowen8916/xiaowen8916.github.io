@@ -1,7 +1,8 @@
 # Header
 menu:
-  Home: /
-  Archives: /archives
+  首页: /
+  存档: /archives
+  我的前端开发作品: /page
 rss: /atom.xml
 
 # Content
@@ -29,7 +30,8 @@ show_count: true
 
 # Miscellaneous
 google_analytics:
-favicon: /favicon.png
+#favicon: /favicon.png
+favicon: /image/favicon.ico
 twitter:
 google_plus:
 fb_admins:
