@@ -73,3 +73,6 @@ deploy:
   type: git
   repository: git@github.com:xiaowen8916/xiaowen8916.github.io.git
   branch: master
+
+#duoshuo comment
+duoshuo_shortname: shiqiwen
