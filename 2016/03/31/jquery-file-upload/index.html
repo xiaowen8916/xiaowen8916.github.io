@@ -11,7 +11,7 @@
 <meta property="og:url" content="http://shiqiwen.com/2016/03/31/jquery-file-upload/index.html">
 <meta property="og:site_name" content="小文的Blog">
 <meta property="og:description" content="jquery,jquery-file-upload,jqueryfileupload,jquery图片上传插件,异步图片上传">
-<meta property="og:updated_time" content="2016-04-01T04:27:36.517Z">
+<meta property="og:updated_time" content="2016-04-01T04:37:54.085Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jquery-file-upload异步图片上传使用总结">
 <meta name="twitter:description" content="jquery,jquery-file-upload,jqueryfileupload,jquery图片上传插件,异步图片上传">
@@ -137,7 +137,7 @@ var cdBlob=cdItems[0].getAsFile();
 cdBlob[&apos;name&apos;]=&apos;image_&apos;+new Date().getTime()+&apos;.&apos;+cdItem[0].type.replace(&apos;image/&apos;,&apos;&apos;);  
 var fileList=[cdBlob];
 </code></pre><p>好了，待上传的图片文件列表准备完毕，接下来就是进行上传操作：  </p>
-<pre><code>var $input=$(inputDom);
+<pre><code>var $input=$(&apos;inputDom&apos;);//直接创建jq对象即可(html页面中的inputDom可以不存在，也不需要在此插入到页面中去)
 $input.fileupload(options)//初始化插件  
 .bind(&apos;fileuploadsend&apos;,fn1).bind(&apos;fileuploadprogressall&apos;,fn2).bind(&apos;fileuploaddone&apos;,fn3);//绑定上传相关事件
 //上传单个图片文件列表
@@ -151,7 +151,7 @@ $input.fileupload(&apos;add&apos;,{files:fileList});
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shiqiwen.com/2016/03/31/jquery-file-upload/" data-id="cimh7mwsa0004wkicms0itpvf" class="article-share-link">Share</a>
+      <a data-url="http://shiqiwen.com/2016/03/31/jquery-file-upload/" data-id="cimh83mha00015gicxz2bguai" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jquery-file-upload/">jquery-file-upload</a></li></ul>
