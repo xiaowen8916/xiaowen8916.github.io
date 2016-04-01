@@ -96,7 +96,7 @@ redirect域必须与你jquery.fileupload.js所访问的域一致，如果不一�
 
 好了，待上传的图片文件列表准备完毕，接下来就是进行上传操作：  
 
-	var $input=$(inputDom);
+	var $input=$('inputDom');//直接创建jq对象即可(html页面中的inputDom可以不存在，也不需要在此插入到页面中去)
     $input.fileupload(options)//初始化插件  
 	.bind('fileuploadsend',fn1).bind('fileuploadprogressall',fn2).bind('fileuploaddone',fn3);//绑定上传相关事件
 	//上传单个图片文件列表
