@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>jquery-file-upload异步图片上传使用总结 | 小文的Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="jquery-file-upload,jqueryfileupload,jquery图片上传插件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jquery-file-upload异步图片上传使用总结">
+<meta property="og:url" content="http://shiqiwen.com/2016/03/31/jquery-file-upload/index.html">
+<meta property="og:site_name" content="小文的Blog">
+<meta property="og:description" content="jquery-file-upload,jqueryfileupload,jquery图片上传插件">
+<meta property="og:updated_time" content="2016-04-01T04:14:03.454Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jquery-file-upload异步图片上传使用总结">
+<meta name="twitter:description" content="jquery-file-upload,jqueryfileupload,jquery图片上传插件">
+  
+    <link rel="alternate" href="/atom.xml" title="小文的Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/image/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <div class="head-img"><img src="/image/head_img.png"/></div>
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小文的Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">存档</a>
+        
+          <a class="main-nav-link" href="/page">我的前端开发作品</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://shiqiwen.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-jquery-file-upload" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/31/jquery-file-upload/" class="article-date">
+  <time datetime="2016-03-31T07:59:45.000Z" itemprop="datePublished">2016-03-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      jquery-file-upload异步图片上传使用总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>jquery-file-upload是一个比较出色的jquery文件上传插件(<a href="https://github.com/blueimp/jQuery-File-Upload/wiki" target="_blank" rel="external">官网</a>)<br>本文主要讲述笔者在桌面浏览器端的一些使用经验：<br><a id="more"></a></p>
+<p>##浏览器兼容性<br>Google Chrome<br>Apple Safari 4.0+<br>Mozilla Firefox 3.0+<br>Opera 11.0+<br>Microsoft Internet Explorer 6.0+  </p>
+<p>就上面看浏览器兼容性不错<br>但笔者开发要求适配IE8+和其他现代浏览器  </p>
+<p>##插件依赖<br><a href="http://jquery.com/" target="_blank" rel="external">jQuery v. 1.6+</a><br><a href="http://api.jqueryui.com/jQuery.widget/" target="_blank" rel="external">jQuery UI widget factory v. 1.9+ (包括)</a><br><a href="https://github.com/blueimp/jQuery-File-Upload/blob/master/js/jquery.iframe-transport.js" target="_blank" rel="external">jQuery Iframe Transport plugin (包括)</a>  </p>
+<p>当然还有其他一些可选依赖，没用到不做阐述  </p>
+<p>##使用<br>在浏览器上进行文件上传，当然要用到input标签啦<br><code>&lt;input type=&quot;file&quot; name=&quot;XXX&quot; multiple=&quot;multiple&quot; accept=&quot;image/jpg...&quot;/&gt;</code><br>(后面的inputDom都用此标签代指)<br>type不用说啦<br>name属性作为文件上传后端接收的参数名<br>multiple属性表示是否在文件选择窗口中可以同时选择多个文件<br>accept表示限定文件选择窗口中出现的文件类型，方便过滤需要的文件  </p>
+<p>###初始化插件<br>    var options={<br>        url:xxx,//服务器的图片上传接口地址<br>        acceptFileTypes:/.(?:gif|jpe?g|png)$/i,//上传文件限制类型<br>        maxFileSize：2<em>1024</em>1024,//上传文件限制大小<br>        dropZone:null,//笔者自己定制了拖拽区域，故此为null<br>        dataType:’json’,//在使用ajax上传图片成功后后端返回图片在服务器上的访问地址json数据<br>        redirect:path+’result.html?%s’//在不支持ajax上传文件的浏览器上使用表单提交和重定向iframe配合实现上传图片<br>    };<br>    $(inputDom).fileupload(options);</p>
+<p>支持ajax level2的浏览器上传图片很方便，没烦恼，嘿嘿！</p>
+<p>IE10-只能使用iframe重定向方式上传图片，前面option说到的redirect配置就很重要了<br>redirect域必须与你jquery.fileupload.js所访问的域一致，如果不一致就会导致插件无法正确获取服务器在成功上传图片后返回的img url json数据  </p>
+<p>当然服务器也是要做些处理的，插件如果使用iframe方式上传图片的话，后端会接收到前端options配置的redirect参数，一旦接到redirect参数，服务器端处理好的json就不能直接用application/json形式返回json数据，转而必须将处理好的json数据拼在前端传的redirect地址后面替换%s，然后重定向到拼好json的redirect地址中去  </p>
+<p>大家肯定想问前端还要怎么处理，前端就不用处理啦！O(∩_∩)O~~  </p>
+<p>关于其中实现的一些机制，大家可以看下插件当中的result.html文件，插件内部会将iframe redirect url后面拼好的json string取到iframe body内部，再从body内部拿出来解析成js对象供用户使用</p>
+<p>###绑定插件上传图片事件<br>插件中的事件有很多，我这只说说一般要用到的<br>  fileuploadsend  //图片上传前的校验回调函数<br>  fileuploadprogressall  //图片上传中回调函数<br>  fileuploaddone  //图片上传成功后回调函数<br>使用方式：  </p>
+<pre><code>$(inputDom).fileupload(options).bind(&apos;fileuploadsend&apos;,function(e,data){
+    var file=data.files[0];//上传的图片文件对象
+    //return false;当前图片上传请求会中断
+}).bind(&apos;fileuploadprogressall&apos;,function(e,data){
+    //可以设置一些加载中的效果
+}).bind(&apos;fileuploaddone&apos;,function(e,data){
+    // var json=data.result;//图片上传成功后返回的json数据
+});
+</code></pre><p>当然还有另外一种绑定事件方式，就是写在插件配置的options对象里  </p>
+<p>###编程式上传图片<br>有些场景不知道大家考虑过没有，比如在浏览器支持拖拽本地图片文件和粘贴剪切板图片时，这些时候怎么上传图片呢？(查询支持拖拽和粘贴事件的浏览器可访问<a href="http://caniuse.com" target="_blank" rel="external">caniuse官网</a>)  </p>
+<p>在支持drop事件的浏览器中，用户拖拽图片文件进入浏览器事件绑定dom区域会触发drop事件，drop事件的handler回调函数的event参数会接收到用户拖拽的图片列表，获取方式如下：  </p>
+<pre><code>var fileList=event.dataTransfer.files;  
+</code></pre><p>在支持paste事件的浏览器中，用户在对应的事件绑定dom上右键选择粘贴(ctrl+v)后会触发paste事件，paste事件的handler回调函数的event参数会读取到剪切板中的信息，当然我们得判断一下是不是我们需要的图片信息：  </p>
+<pre><code>var cdItems=event.clipboardData&amp;&amp;event.clipboardData.items&amp;&amp; event.clipboardData.items.length===1&amp;&amp;/^image\//.test(event.clipboardData.items[0].type)?event.clipboardData.items:null;  
+/*
+*  cdItems就是我们的图片文件列表数据，但是我们不能直接使用
+*  因为后端识别不了这种DataTransferItem数据结构，我们必须处理成Blob类型数据
+*/
+var cdBlob=cdItems[0].getAsFile();
+/*
+*  设置一个name属性，插件需要把其当做文件名称，如不设置，后端会收到名称为undefined的 
+*  图片数据，可能会影响后端相关校验
+*/  
+cdBlob[&apos;name&apos;]=&apos;image_&apos;+new Date().getTime()+&apos;.&apos;+cdItem[0].type.replace(&apos;image/&apos;,&apos;&apos;);  
+var fileList=[cdBlob];
+</code></pre><p>好了，待上传的图片文件列表准备完毕，接下来就是进行上传操作：  </p>
+<pre><code>var $input=$(inputDom);
+$input.fileupload(options)//初始化插件  
+.bind(&apos;fileuploadsend&apos;,fn1).bind(&apos;fileuploadprogressall&apos;,fn2).bind(&apos;fileuploaddone&apos;,fn3);//绑定上传相关事件
+//上传单个图片文件列表
+$input.fileupload(&apos;send&apos;,{files:fileList});
+//上传多个图片文件列表
+$input.fileupload(&apos;add&apos;,{files:fileList});
+</code></pre><p>一般使用add方法即可，插件会逐次上传每个图片文件  </p>
+<p>##最后<br>jquery-file-upload插件功能非常强大，插件中还有很多有用的可选配置和事件绑定本文没有阐述，其他一些拓展插件更能对本插件的功能锦上添花，有需要的开发者可以根据需求自行选择  </p>
+<p>在此也推荐一款国内比较优秀的图片上传插件<a href="http://fex.baidu.com/webuploader/" target="_blank" rel="external">webuploader</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://shiqiwen.com/2016/03/31/jquery-file-upload/" data-id="cimh76hio0001e8ic6d2rq4ju" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jquery-file-upload/">jquery-file-upload</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/31/reference/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">有用的技术参考网址汇总</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-thread-key="2016/03/31/jquery-file-upload/" data-title="jquery-file-upload异步图片上传使用总结" data-url="http://shiqiwen.com/2016/03/31/jquery-file-upload/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:'shiqiwen'};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+  <!-- 多说公共JS代码 end -->
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/first-blog，markdown语法/">first blog，markdown语法</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jquery-file-upload/">jquery-file-upload</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/first-blog，markdown语法/" style="font-size: 10px;">first blog，markdown语法</a> <a href="/tags/jquery-file-upload/" style="font-size: 10px;">jquery-file-upload</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/03/31/jquery-file-upload/">jquery-file-upload异步图片上传使用总结</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/31/reference/">有用的技术参考网址汇总</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/03/first-post/">拥有纪念意义的第一篇文章</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 ShiQiWen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">存档</a>
+  
+    <a href="/page" class="mobile-nav-link">我的前端开发作品</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
