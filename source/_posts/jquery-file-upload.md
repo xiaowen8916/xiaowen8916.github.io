@@ -2,13 +2,13 @@
 title: jquery-file-upload异步图片上传使用总结
 date: 2016-03-31 15:59:45
 tags: [jquery-file-upload]
-description: jquery-file-upload,jqueryfileupload,jquery图片上传插件
+description: jquery,jquery-file-upload,jqueryfileupload,jquery图片上传插件,异步图片上传
 ---
 
 jquery-file-upload是一个比较出色的jquery文件上传插件([官网][4])  
 本文主要讲述笔者在桌面浏览器端的一些使用经验：  
 <!-- more -->
-##浏览器兼容性  
+## 浏览器兼容性  
 Google Chrome  
 Apple Safari 4.0+  
 Mozilla Firefox 3.0+  
@@ -19,21 +19,22 @@ Microsoft Internet Explorer 6.0+
 就上面看浏览器兼容性不错  
 但笔者开发要求适配IE8+和其他现代浏览器  
 
-##插件依赖  
+## 插件依赖  
 [jQuery v. 1.6+][1]  
 [jQuery UI widget factory v. 1.9+ (包括)][2]  
 [jQuery Iframe Transport plugin (包括)][3]  
   
 当然还有其他一些可选依赖，没用到不做阐述  
-##使用  
+## 使用  
 在浏览器上进行文件上传，当然要用到input标签啦  
-`<input type="file" name="XXX" multiple="multiple" accept="image/jpg..."/>`  
+
+    <input type="file" name="XXX" multiple="multiple" accept="image/jpg..."/>  
 (后面的inputDom都用此标签代指)  
 type不用说啦  
 name属性作为文件上传后端接收的参数名  
 multiple属性表示是否在文件选择窗口中可以同时选择多个文件  
 accept表示限定文件选择窗口中出现的文件类型，方便过滤需要的文件  
-###初始化插件    
+### 初始化插件    
     var options={
 		url:xxx,//服务器的图片上传接口地址
 		acceptFileTypes:/\.(?:gif|jpe?g|png)$/i,//上传文件限制类型
@@ -54,7 +55,7 @@ redirect域必须与你jquery.fileupload.js所访问的域一致，如果不一�
 大家肯定想问前端还要怎么处理，前端就不用处理啦！O(∩_∩)O~~  
 
 关于其中实现的一些机制，大家可以看下插件当中的result.html文件，插件内部会将iframe redirect url后面拼好的json string取到iframe body内部，再从body内部拿出来解析成js对象供用户使用
-###绑定插件上传图片事件  
+### 绑定插件上传图片事件  
 插件中的事件有很多，我这只说说一般要用到的  
   fileuploadsend  //图片上传前的校验回调函数  
   fileuploadprogressall  //图片上传中回调函数  
@@ -71,7 +72,7 @@ redirect域必须与你jquery.fileupload.js所访问的域一致，如果不一�
 	});
 
 当然还有另外一种绑定事件方式，就是写在插件配置的options对象里  
-###编程式上传图片  
+### 编程式上传图片  
 有些场景不知道大家考虑过没有，比如在浏览器支持拖拽本地图片文件和粘贴剪切板图片时，这些时候怎么上传图片呢？(查询支持拖拽和粘贴事件的浏览器可访问[caniuse官网][5])  
 
 在支持drop事件的浏览器中，用户拖拽图片文件进入浏览器事件绑定dom区域会触发drop事件，drop事件的handler回调函数的event参数会接收到用户拖拽的图片列表，获取方式如下：  
@@ -104,7 +105,7 @@ redirect域必须与你jquery.fileupload.js所访问的域一致，如果不一�
 	$input.fileupload('add',{files:fileList});
 
 一般使用add方法即可，插件会逐次上传每个图片文件  
-##最后  
+## 最后  
 jquery-file-upload插件功能非常强大，插件中还有很多有用的可选配置和事件绑定本文没有阐述，其他一些拓展插件更能对本插件的功能锦上添花，有需要的开发者可以根据需求自行选择  
 
 在此也推荐一款国内比较优秀的图片上传插件[webuploader][6]
